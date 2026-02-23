@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shagun Choudhary - Interactive Resume Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .toolbar {
+            background: #2c3e50;
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-pdf {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-pdf:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-docx {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-docx:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #229954;
+            transform: translateY(-2px);
+        }
+
+        .edit-mode {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px dashed #3498db;
+        }
+
+        .edit-textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+
+        .resume-content {
+            padding: 40px;
+            background: white;
+        }
+
+        /* Updated Styles for Bold Headings and Centered Name */
+        .resume-content h1 {
+            font-size: 36px;
+            margin-bottom: 5px;
+            color: #1a5276;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .resume-content h2 {
+            font-size: 20px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            color: #34495e;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-align: center;
+            border-bottom: 1px dashed #bdc3c7;
+            padding-bottom: 10px;
+        }
+
+        .resume-content h3 {
+            font-size: 20px;
+            margin: 25px 0 15px 0;
+            color: #1a5276;
+            border-left: 6px solid #3498db;
+            padding-left: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, #f8f9fa, transparent);
+            padding: 8px 0 8px 12px;
+        }
+
+        .contact-info {
+            margin: 15px 0 25px 0;
+            padding: 12px 0;
+            background: #f0f3f5;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+            border: 1px solid #d5dbdb;
+        }
+
+        .job-title {
+            font-weight: 700;
+            color: #1a5276;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            border-bottom: 1px dotted #aed6f1;
+            padding-bottom: 5px;
+        }
+
+        .company {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .date {
+            float: right;
+            font-weight: 500;
+            color: #7f8c8d;
+            font-style: italic;
+            background: #f8f9f9;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        ul {
+            margin-top: 8px;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .skills-grid, .personal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e5e8e8;
+        }
+
+        .skills-grid span {
+            font-weight: 600;
+            padding: 5px 0;
+        }
+
+        .personal-grid div {
+            font-weight: 500;
+            padding: 5px 0;
+        }
+
+        .personal-grid strong {
+            font-weight: 700;
+            color: #1a5276;
+        }
+
+        .declaration {
+            margin-top: 30px;
+            font-style: italic;
+            font-weight: 500;
+            background: #fef9e7;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #f1c40f;
+        }
+
+        .signature {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f8f9f9;
+            border-radius: 8px;
+            text-align: right;
+        }
+
+        .signature p {
+            font-weight: 600;
+            margin: 5px 0;
+        }
+
+        hr {
+            border: 0;
+            border-top: 2px solid #3498db;
+            margin: 30px 0 15px 0;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .instruction-box {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Print styles for PDF */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .toolbar, .edit-mode, .instruction-box {
+                display: none;
+            }
+            .resume-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="toolbar">
+            <button class="btn btn-edit" onclick="toggleEdit()">
+                <span>✏️</span> Edit Resume
+            </button>
+            <button class="btn btn-pdf" onclick="downloadPDF()">
+                <span>📥</span> Download PDF
+            </button>
+            <button class="btn btn-docx" onclick="downloadDOCX()">
+                <span>📥</span> Download DOCX
+            </button>
+        </div>
+
+        <div id="editSection" class="edit-mode hidden">
+            <div class="instruction-box">
+                <strong>✏️ EDIT MODE:</strong> Modify any text below. Click "Save Changes" when done.
+            </div>
+            <textarea id="resumeEditor" class="edit-textarea">
+SHAGUN CHOUDHARY
+Assistant Manager - Store
++91 95285 68934 | shagunchoudhary509@gmail.com
+
+CAREER OBJECTIVE
+To be associated with an esteemed organization that provides opportunities for growth and development, contributing to the overall success of the organization.
+
+MANAGEMENT SKILLS
+• Inventory Management, SAP, Logistics
+• Achievement-Oriented Team Builder
+• Persuasive Communicator
+• Leadership Skills
+• Hard-working, Smart-working
+
+ACADEMIC QUALIFICATIONS
+• B.Sc. – Subharti University, 2024
+• Language Course – Ufa University of Science and Technology, Russia
+• 12th – U.P. Board, 2020
+• 10th – U.P. Board, 2018
+
+IT SKILLS
+• Basic Computer Skills: MS Office, Internet
+• ERP Software: Tally ERP, Tally Prime
+• Enterprise Systems: SAP Business One
+
+PROFESSIONAL EXPERIENCE
+
+Assistant Manager - Store | APT ELECTRONIC Pvt. Ltd., Noida (2024 - Present)
+• Preparing & maintaining daily goods issue and receive in SAP.
+• Preparing & maintaining GRN and MRN.
+• Maintaining Inventory as per FIFO.
+• Update daily MIS Report.
+• Arrange logistics and dispatch.
+
+Assistant Manager - Store | Excel Green Tech Pvt. Ltd., Noida (2023 - 2024)
+• Ensured compliance with local utilities and created SOP documents for energy audits.
+• Maintained forecast accuracy for inventory requirements.
+• Managed daily goods issue/receipt in SAP.
+• Maintained GRN and MRN records.
+• Implemented FIFO for inventory management.
+• Updated MIS reports, arranged logistics & dispatch.
+• Managed materials according to plan.
+
+Store Executive | U.S. Metal Products, Haridwar (2019 - 2021)
+• Managed incoming material data.
+• Prepared purchase orders and invoices.
+• Raised invoices in Tally ERP & Tally Prime.
+• Maintained GRN, in-out challans, and bills.
+• Prepared daily SIV report in Tally Prime.
+• Handled job work data, invoices, and E-Way bills.
+
+Warehouse Executive | Wada Al Madina, Dubai (2022)
+• Managed incoming and outgoing goods.
+• Prepared inventory reports.
+• Coordinated logistics and order fulfillment.
+
+PERSONAL DETAILS
+Date of Birth: 10 April 2003
+Father's Name: Mr. Pushpendra Singh
+Languages Known: English, Hindi, Russian
+Address: Village - Aarakhpur Khalsa Milak, Post - Ladanpur, Distt. - Amroha
+Gender: Male
+Marital Status: Unmarried
+Nationality: Indian
+
+DECLARATION
+I hereby declare that the above information is true and correct to the best of my knowledge.
+
+(Shagun Choudhary)
+Date: 12 Aug 2025
+            </textarea>
+            <button class="btn btn-save" onclick="saveChanges()">
+                <span>💾</span> Save Changes
+            </button>
+        </div>
+
+        <div id="resumeDisplay" class="resume-content">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Default resume data
+        let currentResumeData = {
+            name: "SHAGUN CHOUDHARY",
+            title: "Assistant Manager - Store",
+            phone: "+91 95285 68934",
+            email: "shagunchoudhary509@gmail.com",
+            objective: "To be associated with an esteemed organization that provides opportunities for growth and development, contributing to the overall success of the organization.",
+            skills: [
+                "Inventory Management, SAP, Logistics",
+                "Achievement-Oriented Team Builder",
+                "Persuasive Communicator",
+                "Leadership Skills",
+                "Hard-working, Smart-working"
+            ],
+            education: [
+                "B.Sc. – Subharti University, 2024",
+                "Language Course – Ufa University of Science and Technology, Russia",
+                "12th – U.P. Board, 2020",
+                "10th – U.P. Board, 2018"
+            ],
+            itSkills: [
+                "Basic Computer Skills: MS Office, Internet",
+                "ERP Software: Tally ERP, Tally Prime",
+                "Enterprise Systems: SAP Business One"
+            ],
+            experience: [
+                {
+                    title: "Assistant Manager - Store",
+                    company: "APT ELECTRONIC Pvt. Ltd., Noida",
+                    date: "2024 - Present",
+                    points: [
+                        "Preparing & maintaining daily goods issue and receive in SAP.",
+                        "Preparing & maintaining GRN and MRN.",
+                        "Maintaining Inventory as per FIFO.",
+                        "Update daily MIS Report.",
+                        "Arrange logistics and dispatch."
+                    ]
+                },
+                {
+                    title: "Assistant Manager - Store",
+                    company: "Excel Green Tech Pvt. Ltd., Noida",
+                    date: "2023 - 2024",
+                    points: [
+                        "Ensured compliance with local utilities and created SOP documents for energy audits.",
+                        "Maintained forecast accuracy for inventory requirements.",
+                        "Managed daily goods issue/receipt in SAP.",
+                        "Maintained GRN and MRN records.",
+                        "Implemented FIFO for inventory management.",
+                        "Updated MIS reports, arranged logistics & dispatch.",
+                        "Managed materials according to plan."
+                    ]
+                },
+                {
+                    title: "Store Executive",
+                    company: "U.S. Metal Products, Haridwar",
+                    date: "2019 - 2021",
+                    points: [
+                        "Managed incoming material data.",
+                        "Prepared purchase orders and invoices.",
+                        "Raised invoices in Tally ERP & Tally Prime.",
+                        "Maintained GRN, in-out challans, and bills.",
+                        "Prepared daily SIV report in Tally Prime.",
+                        "Handled job work data, invoices, and E-Way bills."
+                    ]
+                },
+                {
+                    title: "Warehouse Executive",
+                    company: "Wada Al Madina, Dubai",
+                    date: "2022",
+                    points: [
+                        "Managed incoming and outgoing goods.",
+                        "Prepared inventory reports.",
+                        "Coordinated logistics and order fulfillment."
+                    ]
+                }
+            ],
+            personal: {
+                dob: "10 April 2003",
+                father: "Mr. Pushpendra Singh",
+                languages: "English, Hindi, Russian",
+                address: "Village - Aarakhpur Khalsa Milak, Post - Ladanpur, Distt. - Amroha",
+                gender: "Male",
+                marital: "Unmarried",
+                nationality: "Indian"
+            },
+            declarationDate: "12 Aug 2025"
+        };
+
+        // Function to render resume
+        function renderResume() {
+            const display = document.getElementById('resumeDisplay');
+            
+            let skillsHTML = '';
+            currentResumeData.skills.forEach(skill => {
+                skillsHTML += `<span>✔ ${skill}</span>`;
+            });
+
+            let educationHTML = '';
+            currentResumeData.education.forEach(edu => {
+                const parts = edu.split('–');
+                educationHTML += `<li><strong>${parts[0]}</strong> – ${parts[1]}</li>`;
+            });
+
+            let itSkillsHTML = '';
+            currentResumeData.itSkills.forEach(skill => {
+                itSkillsHTML += `<li><strong>${skill.split(':')[0]}:</strong>${skill.split(':')[1]}</li>`;
+            });
+
+            let experienceHTML = '';
+            currentResumeData.experience.forEach(exp => {
+                let pointsHTML = '';
+                exp.points.forEach(point => {
+                    pointsHTML += `<li>${point}</li>`;
+                });
+                
+                experienceHTML += `
+                    <div class="job-title">${exp.title} <span class="date">${exp.date}</span></div>
+                    <div class="company">${exp.company}</div>
+                    <ul>${pointsHTML}</ul>
+                `;
+            });
+
+            display.innerHTML = `
+                <h1>${currentResumeData.name}</h1>
+                <h2>${currentResumeData.title}</h2>
+                <div class="contact-info">📞 ${currentResumeData.phone} | ✉️ ${currentResumeData.email}</div>
+                
+                <h3>📋 CAREER OBJECTIVE</h3>
+                <p><strong>${currentResumeData.objective}</strong></p>
+                
+                <h3>⚡ MANAGEMENT SKILLS</h3>
+                <div class="skills-grid">${skillsHTML}</div>
+                
+                <h3>🎓 ACADEMIC QUALIFICATIONS</h3>
+                <ul>${educationHTML}</ul>
+                
+                <h3>💻 IT SKILLS</h3>
+                <ul>${itSkillsHTML}</ul>
+                
+                <h3>💼 PROFESSIONAL EXPERIENCE</h3>
+                ${experienceHTML}
+                
+                <h3>👤 PERSONAL DETAILS</h3>
+                <div class="personal-grid">
+                    <div><strong>Date of Birth:</strong> ${currentResumeData.personal.dob}</div>
+                    <div><strong>Father's Name:</strong> ${currentResumeData.personal.father}</div>
+                    <div><strong>Languages Known:</strong> ${currentResumeData.personal.languages}</div>
+                    <div><strong>Address:</strong> ${currentResumeData.personal.address}</div>
+                    <div><strong>Gender:</strong> ${currentResumeData.personal.gender}</div>
+                    <div><strong>Marital Status:</strong> ${currentResumeData.personal.marital}</div>
+                    <div><strong>Nationality:</strong> ${currentResumeData.personal.nationality}</div>
+                </div>
+                
+                <h3>📜 DECLARATION</h3>
+                <p class="declaration"><strong>I hereby declare that the above information is true and correct to the best of my knowledge.</strong></p>
+                <div class="signature">
+                    <p><strong>(${currentResumeData.name})</strong></p>
+                    <p><strong>Date:</strong> ${currentResumeData.declarationDate}</p>
+                </div>
+                <hr>
+                <p class="footer-note"><strong>${currentResumeData.name}</strong> - ${currentResumeData.title} | SAP | Inventory | Logistics</p>
+            `;
+        }
+
+        // Toggle edit mode
+        function toggleEdit() {
+            const editSection = document.getElementById('editSection');
+            editSection.classList.toggle('hidden');
+        }
+
+        // Save changes from editor
+        function saveChanges() {
+            const editor = document.getElementById('resumeEditor');
+            const text = editor.value;
+            
+            // Update the display with edited text (keeping formatting)
+            document.getElementById('resumeDisplay').innerHTML = `<pre style="font-family: 'Segoe UI', 'Calibri', sans-serif; white-space: pre-wrap; font-size: 14px; line-height: 1.6; font-weight: 500;">${text}</pre>`;
+            
+            toggleEdit();
+            alert('✅ Changes saved! You can now download PDF or DOCX.');
+        }
+
+        // Download as PDF
+        function downloadPDF() {
+            window.print();
+        }
+
+        // Download as DOCX
+        function downloadDOCX() {
+            const content = document.getElementById('resumeDisplay').innerText;
+            const blob = new Blob([content], { type: 'application/msword' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Shagun_Choudhary_Resume.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize resume
+        renderResume();
+    </script>
+</body>
+</html>
